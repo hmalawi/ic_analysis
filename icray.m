@@ -24,12 +24,23 @@ function [corelat,corelon,coredep,epid,p,turnpt] = ...
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
 %
+% SEE ALSO:
+%
+% Requires TAUPPATH from 
 %
 % Written by Huda Al Alawi - May 16th, 2021.
 
 % Define default values
 defval('mod','ak135')
 defval('vphase','PKIKP')
+
+% Default to a reasonable earthquake 
+defval('eqlat',40)
+defval('eqlon',74)
+defval('eqdepth',randi(440))
+% Default station is Guyot Hall
+defval('stalat',40.34585)
+defval('stalon',-74.65475)
 
 % Now let's use taup to discretize some parameters
 data=tauppath('mod',mod,'dep',eqdepth,'ph',vphase,'sta',[stalat stalon],...
@@ -84,8 +95,5 @@ else
     corelat=[raylat(inout(1):inout(2))];
     corelon=[raylon(inout(1):inout(2))];
     coredep=[raydep(inout(1):inout(2))];
-    
 end
 
-
-end
