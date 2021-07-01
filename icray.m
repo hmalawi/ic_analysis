@@ -6,8 +6,6 @@ function [corelat,corelon,coredep,epid,p,turnpt] = ...
 % This function is mainly built to calculate find the the discretized path
 % of the inner core segment of a ray.
 %
-% Written by Huda Al Alawi - May 16th, 2021.
-%
 % INPUT:
 %
 % eqlat           Earthquake's latitude
@@ -26,6 +24,8 @@ function [corelat,corelon,coredep,epid,p,turnpt] = ...
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
 %
+%
+% Written by Huda Al Alawi - May 16th, 2021.
 
 % Define default values
 defval('mod','ak135')

@@ -3,8 +3,6 @@ function icrays3d(T,corelat,corelon,coredep,epid,mod,p,turnpt)
 %
 % This function is to plot 
 %
-% Written by Huda Al Alawi - May 20th, 2021.
-%
 % INPUT:
 %
 % T            The dominant period in seconds [Only for 1 and 2 seconde]
@@ -15,6 +13,8 @@ function icrays3d(T,corelat,corelon,coredep,epid,mod,p,turnpt)
 % mod          The chosen velocity model [defaulted]
 % p            Ray parameter [s/deg]
 % turnpt       Latitude,longitude, and depth of the turning point
+%
+% Written by Huda Al Alawi - May 20th, 2021.
 
 % Define default values
 defval('mod','ak135')
