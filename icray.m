@@ -1,9 +1,9 @@
 function [corelat,corelon,coredep,epid,p,turnpt] = ...
     icray(eqlat,eqlon,eqdepth,stalat,stalon,mod,vphase)
-% [corelat,corelon,coredep,epid] = ...
+% [corelat,corelon,coredep,epid,p,turnpt] = ...
 %                      icray(eqlat,eqlon,eqdepth,stalat,stalon,mod,vphase);
 %
-% This function is mainly built to calculate find the the discretized path
+% This function is mainly built to calculate the discretized path
 % of the inner core segment of a ray.
 %
 % INPUT:
@@ -20,23 +20,25 @@ function [corelat,corelon,coredep,epid,p,turnpt] = ...
 % corelat         The latitude of the discretized path of the innercore ray segment
 % corelon         The longitude of the discretized path of the innercore ray segment
 % coredep         The depth of the discretized path of the innercore ray segment
-% turnpt          The turning point (coordinates and depth)
+% turnpt          The turning point (coordinates, and depth)
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
 %
 % SEE ALSO:
 %
-% Requires TAUPPATH from 
+% Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi - May 16th, 2021.
+% Last modified by Huda Al Alawi - July 2nd, 2021
+%
 
 % Define default values
 defval('mod','ak135')
 defval('vphase','PKIKP')
 
 % Default to a reasonable earthquake 
-defval('eqlat',40)
-defval('eqlon',74)
+defval('eqlat',-50)
+defval('eqlon',40)
 defval('eqdepth',randi(440))
 % Default station is Guyot Hall
 defval('stalat',40.34585)
