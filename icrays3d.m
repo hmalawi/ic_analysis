@@ -1,4 +1,4 @@
-function [pts, index] = ...
+function pts = ...
          icrays3d(T, corelat, corelon, coredep, epid, mod, p, turnpt)
 % pts = icrays3d(T, corelat, corelon, coredep, epid, mod, p, turnpt);
 %
@@ -22,7 +22,7 @@ function [pts, index] = ...
 %
 % Written by Huda Al Alawi - May 20th, 2021.
 % Last modified by Huda Al Alawi - September 27th, 2021
-%
+
 
 % Define default values
 defval('mod', 'ak135')
@@ -38,7 +38,7 @@ switch T
         elseif epid>=170 && epid<180
             width = 390;
         end
-       
+        
     case 2
         if epid>=146 && epid<160
             width = 415;
@@ -63,47 +63,82 @@ turn = 0;
 % The ray is discretized into small "cylinders". Each time, there will be
 % in and out points. We should:
 for ii = 1:length(corelat)-1
-    % 1. Define these points, then call LINE3SPHERE to find the other
-    % intersection point with the sphere of interest.
-    th = [corelon(ii), corelon(ii+1)] * pi/180;
-    phi = [corelat(ii), corelat(ii+1)] * pi/180;
-    r = (R-[coredep(ii), coredep(ii+1)])./R;
-    [x, y, z] = sph2cart(th(:), phi(:), r(:));
-    xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-        [0, 0, 0, (R-coredep(ii))/R], 0);
     
-    % Should find the coordinates of the second point to use CYLINDRIC
-    [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
-    outlon = th*180/pi; outlat = phi*180/pi;
-    
-    % 2. Call CYLINDRIC to find the interection of a cylinder of radius r
-    % (ray with kernel width) with a sphere. There will be top patch and bottom
-    % patch. Take the top until the turning point, then take the bottom.
-    % Radius of sphere and cylinder are normalized (using sphere's radius)
-    [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
-        [outlon outlat], 1, 0);
-    
-    % Check if have reached the turning point yet
-    % If so, change the flag to 1;
+    % Before anything, check if we have reached the turning
+    % point
+    % If so, change the flag to 1, know it's index, define new arrays
+    % for backward tracing, & skip this point for now...
     if turn==0 && corelat(ii)==turnpt(1) && corelon(ii)==turnpt(2) && ...
             coredep(ii)==turnpt(3)
-        turn = 1;
         index = ii;
+        % Change the flag so we don't mess things up
+        turn = 1;
+        % New arrays here
+        newlat = flipud(corelat(index+1:end));
+        newlon = flipud(corelon(index+1:end));
+        newdep = flipud(coredep(index+1:end));
+        % New counting variable
+        jj = 1;
+        continue
     end
     
-    % Top or bottom?
-    % Check, turn the points and the depths
+    % Will trace the ray forward until the turning point and then have to
+    % trace it backward - hopefully that works
     switch turn
         case 0
+            % 1. Define these points, then call LINE3SPHERE to find the other
+            % intersection point with the sphere of interest.
+            th = [corelon(ii), corelon(ii+1)] * pi/180;
+            phi = [corelat(ii), corelat(ii+1)] * pi/180;
+            r = (R-[coredep(ii), coredep(ii+1)])./R;
+            [x, y, z] = sph2cart(th(:), phi(:), r(:));
+            %
+            xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
+                [0, 0, 0, (R-coredep(ii))/R], 0);
+            % plot3(xyz(1,:),xyz(2,:),xyz(3,:),'o','MarkerFaceColor','k')
+            
+            % Should find the coordinates of the second point to use CYLINDRIC
+            [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
+            outlon = th*180/pi; outlat = phi*180/pi;
+            
+            % 2. Call CYLINDRIC to find the interection of a cylinder of radius r
+            % (ray with kernel width) with a sphere. There will be top patch and bottom
+            % patch. Take the top until the turning point, then will have to trace
+            % it backwards
+            % Radius of sphere and cylinder are normalized (using sphere's radius)
+            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
+                [outlon outlat], 1, 0);
+            % Will take the upper patch
             pts{ii,1} = topS;
             pts{ii,2} = coredep(ii);
             
         case 1
-            pts{ii,1} = botS;
-            pts{ii,2} = coredep(ii+1);
-        
+            % Back tracing using the new arrays
+            % Same as described above, no need for detailed comments
+            % Find the other point using LINE3SPHERE
+            th = [newlon(jj), newlon(jj+1)] * pi/180;
+            phi = [newlat(jj), newlat(jj+1)] * pi/180;
+            r = (R-[newdep(jj), newdep(jj+1)])./R;
+            [x, y, z] = sph2cart(th(:), phi(:), r(:));
+            xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
+                [0, 0, 0, (R-coredep(jj))/R], 0);
+            % Change coordinated and then use CYLINDRIC
+            [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
+            outlon = th*180/pi; outlat = phi*180/pi;
+            
+            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(jj) corelat(jj)], ...
+                [outlon outlat], 1, 0);
+            % Will take the upper patch
+            pts{ii,1} = topS;
+            pts{ii,2} = coredep(jj);
+            
+            % Update the counting variable jj
+            jj = jj+1; 
     end
-
 end
+
+% Make sure to remove the zero values at turnning point from pts
+pts(index,:)=[];
+
 
 end
