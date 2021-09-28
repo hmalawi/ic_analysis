@@ -16,6 +16,10 @@ function pts = ...
 % p            Ray parameter [s/deg]
 % turnpt       Latitude, longitude, and depth of the turning point
 %
+% OUTPUT:
+%
+% pts          Cell array with all points defining the "ray cylinders" in the first column and the corresponding depth in the second column
+%
 % SEE ALSO:
 %
 % ICRAY
