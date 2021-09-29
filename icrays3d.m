@@ -28,7 +28,7 @@ function pts = ...
 % ICRAY
 %
 % Written by Huda Al Alawi - May 20th, 2021.
-% Last modified by Huda Al Alawi - September 28th, 2021
+% Last modified by Huda Al Alawi - September 29th, 2021
 
 
 % Define default values
@@ -90,8 +90,8 @@ for ii = 1:length(corelat)-1
         continue
     end
     
-    % Will trace the ray forward until the turning point and then have to
-    % trace it backward - hopefully that works
+    % Forward tracing until the turning point and then have to
+    % trace it backward - it works!
     switch turn
         case 0
             % 1. Define these points, then call LINE3SPHERE to find the other
