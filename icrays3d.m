@@ -1,6 +1,6 @@
 function pts = ...
-         icrays3d(T, corelat, corelon, coredep, epid, mod, p, turnpt)
-% pts = icrays3d(T, corelat, corelon, coredep, epid, mod, p, turnpt);
+         icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, xver)
+% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, xver)
 %
 % This function returns a structure that has the kernel-defining-points
 % of an inner core segment of a ray at different shells (depths).
@@ -11,10 +11,13 @@ function pts = ...
 % corelat      The latitude of the discretized path of the innercore ray segment
 % corelon      The longitude of the discretized path of the innercore ray segment
 % coredep      The depth of the discretized path of the innercore ray segment
+% raydis       The epicentral distance of the discretized path of the innercore ray segment [deg]
 % epid         Epicentral distance
 % mod          The chosen velocity model [defaulted]
 % p            Ray parameter [s/deg]
 % turnpt       Latitude, longitude, and depth of the turning point
+% xver         1 Extra verification by plotting
+%              0 No extra verification or plotting
 %
 % OUTPUT:
 %
@@ -25,11 +28,12 @@ function pts = ...
 % ICRAY
 %
 % Written by Huda Al Alawi - May 20th, 2021.
-% Last modified by Huda Al Alawi - September 27th, 2021
+% Last modified by Huda Al Alawi - September 28th, 2021
 
 
 % Define default values
 defval('mod', 'ak135')
+defval('xver', 1)
 
 % We need to define the width of the kernels based on the dominant period
 % and the epicentral distance (Calvet et al., 2006)
@@ -94,12 +98,15 @@ for ii = 1:length(corelat)-1
             % intersection point with the sphere of interest.
             th = [corelon(ii), corelon(ii+1)] * pi/180;
             phi = [corelat(ii), corelat(ii+1)] * pi/180;
-            r = (R-[coredep(ii), coredep(ii+1)])./R;
+            r = (R-[coredep(ii), coredep(ii+1)])./rsphere;
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             %
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-                [0, 0, 0, (R-coredep(ii))/R], 0);
-            % plot3(xyz(1,:),xyz(2,:),xyz(3,:),'o','MarkerFaceColor','k')
+                [0, 0, 0, (R-coredep(ii))/rsphere], 0);
+            
+%             if xver==1
+%                 % 2D plot using polcart 
+%             end
             
             % Should find the coordinates of the second point to use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
@@ -111,7 +118,7 @@ for ii = 1:length(corelat)-1
             % it backwards
             % Radius of sphere and cylinder are normalized (using sphere's radius)
             [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
-                [outlon outlat], 1, 0);
+                [outlon outlat], (R-coredep(ii))/rsphere , 0);
             % Will take the upper patch
             pts{ii,1} = topS;
             pts{ii,2} = coredep(ii);
@@ -122,10 +129,10 @@ for ii = 1:length(corelat)-1
             % Find the other point using LINE3SPHERE
             th = [newlon(jj), newlon(jj+1)] * pi/180;
             phi = [newlat(jj), newlat(jj+1)] * pi/180;
-            r = (R-[newdep(jj), newdep(jj+1)])./R;
+            r = (R-[newdep(jj), newdep(jj+1)])./rsphere;
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-                [0, 0, 0, (R-coredep(jj))/R], 0);
+                [0, 0, 0, (R-coredep(jj))/rsphere], 0);
             % Change coordinated and then use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
             outlon = th*180/pi; outlat = phi*180/pi;
