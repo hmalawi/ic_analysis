@@ -116,7 +116,7 @@ for ii = 1:length(corelat)-1
             % (ray with kernel width) with a sphere. There will be top patch and bottom
             % patch. Take the top until the turning point, then will have to trace
             % it backwards
-            % Radius of sphere and cylinder are normalized (using sphere's radius)
+            % Radius of sphere and cylinder are normalized (using core's radius)
             [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
                 [outlon outlat], (R-coredep(ii))/rsphere , 0);
             % Will take the upper patch
@@ -132,16 +132,16 @@ for ii = 1:length(corelat)-1
             r = (R-[newdep(jj), newdep(jj+1)])./rsphere;
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-                [0, 0, 0, (R-coredep(jj))/rsphere], 0);
+                [0, 0, 0, (R-newdep(jj))/rsphere], 0);
             % Change coordinated and then use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
             outlon = th*180/pi; outlat = phi*180/pi;
             
-            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(jj) corelat(jj)], ...
-                [outlon outlat], 1, 0);
+            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [newlon(jj) newlat(jj)], ...
+                [outlon outlat], (R-newdep(jj))/rsphere, 0);
             % Will take the upper patch
             pts{ii,1} = topS;
-            pts{ii,2} = coredep(jj);
+            pts{ii,2} = newdep(jj);
             
             % Update the counting variable jj
             jj = jj+1; 
