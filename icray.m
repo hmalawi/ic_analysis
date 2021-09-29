@@ -1,6 +1,6 @@
-function [corelat, corelon, coredep, epid, p, turnpt] = ...
+function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
     icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase)
-% [corelat, corelon, coredep, epid, p, turnpt] = ...
+% [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %                icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase);
 %
 % This function is mainly built to calculate the discretized path
@@ -20,7 +20,8 @@ function [corelat, corelon, coredep, epid, p, turnpt] = ...
 %
 % corelat         The latitude of the discretized path of the innercore ray segment
 % corelon         The longitude of the discretized path of the innercore ray segment
-% coredep         The depth of the discretized path of the innercore ray segment
+% coredep         The depth of the discretized path of the innercore ray segment [km] 
+% coredis         The epicentral distance of the discretized path of the innercore ray segment [deg]
 % turnpt          The turning point (coordinates, and depth)
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
@@ -30,7 +31,7 @@ function [corelat, corelon, coredep, epid, p, turnpt] = ...
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi - May 16th, 2021
-% Last modified by Huda Al Alawi - September 27th, 2021
+% Last modified by Huda Al Alawi - September 29th, 2021
 %
 
 % Define default values
@@ -53,11 +54,11 @@ data = tauppath('mod', mod, 'dep', eqdepth, 'ph', vphase, 'sta', ...
 epid = data.distance;
 % Ray parameter
 p = data.rayparameter;
-% Discretize epicentral distance
+% Discretized epicentral distance
 raydis = data.path.distance;
-% Discretize depth
+% Discretized depth
 raydep = data.path.depth;
-% Discretize location
+% Discretized location
 raylat = data.path.latitude;
 raylon = data.path.longitude;
 
@@ -99,5 +100,6 @@ else
     corelat = [raylat(inout(1):inout(2))];
     corelon = [raylon(inout(1):inout(2))];
     coredep = [raydep(inout(1):inout(2))];
+    coredis = [raydis(inout(1):inout(2))];
 end
 
