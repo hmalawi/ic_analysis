@@ -32,7 +32,7 @@ function pts = ...
 
 
 % Define default values
-defval('T', '1')
+defval('T', 1)
 defval('mod', 'ak135')
 defval('xver', 1)
 
@@ -56,6 +56,8 @@ switch T
         elseif epid>=170 && epid<180
             width = 540;
         end
+ otherwise
+  error('Need to specify an acceptable period')
 end
 
 % The radius of the inner core based on the choosen model...
