@@ -29,7 +29,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %
 % EXAMPLE:
 %
-% [corelat, corelon, coredep, coredis, epid, p, turnpt]=icray;
+% [corelat, corelon, coredep, coredis, epid, p, turnpt] = icray;
 % % Makes a plot
 % pts =  icrays3d(T, corelat, corelon, coredep, coredis, epid, [], p, turnpt);
 %
@@ -38,9 +38,8 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi - May 16th, 2021
-% Last modified by Huda Al Alawi - September 29th, 2021
-
-
+% Last modified by Huda Al Alawi - October 5th, 2021
+%
 
 % Define default values
 defval('mod', 'ak135')
@@ -48,7 +47,7 @@ defval('vphase', 'PKIKP')
 
 % Default to a reasonable earthquake 
 defval('eqlat', -50)
-defval('eqlon', 40)
+defval('eqlon', 70)
 defval('eqdepth', randi(440))
 % Default station is Guyot Hall
 defval('stalat', 40.34585)
