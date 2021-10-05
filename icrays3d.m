@@ -32,6 +32,7 @@ function pts = ...
 
 
 % Define default values
+defval('T', '1')
 defval('mod', 'ak135')
 defval('xver', 1)
 

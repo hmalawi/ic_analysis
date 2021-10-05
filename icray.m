@@ -31,6 +31,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %
 % [corelat, corelon, coredep, coredis, epid, p, turnpt]=icray;
 % % Makes a plot
+% pts =  icrays3d(T, corelat, corelon, coredep, coredis, epid, [], p, turnpt);
 %
 % SEE ALSO:
 %
@@ -38,7 +39,8 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %
 % Written by Huda Al Alawi - May 16th, 2021
 % Last modified by Huda Al Alawi - September 29th, 2021
-%
+
+
 
 % Define default values
 defval('mod', 'ak135')
