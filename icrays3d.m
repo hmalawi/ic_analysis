@@ -1,6 +1,6 @@
 function pts = ...
-         icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, xver)
-% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, xver)
+         icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
+% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
 %
 % This function returns a structure that has the kernel-defining-points
 % of an inner core segment of a ray at different shells (depths).
@@ -16,15 +16,13 @@ function pts = ...
 % mod          The chosen velocity model [defaulted]
 % p            Ray parameter [s/deg]
 % turnpt       Latitude, longitude, and depth of the turning point
-% xver         1 Extra verification by plotting
-%              0 No extra verification or plotting
 %
 % OUTPUT:
 %
 % pts         Cell array with all x,y,z points defining the "ray cylinders" in the first
-%              column and the corresponding depth in the second column;
-%              these points are on a unit sphere of radius for the
-%              corresponding depth 
+%             column and the corresponding depth in the second column;
+%             these points are on a unit sphere of radius for the
+%             corresponding depth 
 %
 % EXAMPLE:
 %
@@ -39,14 +37,13 @@ function pts = ...
 % ICRAY
 %
 % Written by Huda Al Alawi - May 20th, 2021.
-% Last modified by Huda Al Alawi - September 29th, 2021
-
+% Last modified by Huda Al Alawi - October 5th, 2021
+%
 
 % Define default values
 defval('T', 1)
 defval('mod', 'ak135')
-defval('xver', 1)
-defval('width', 333)
+defval('width', 300)
 
 % We need to define the width of the kernels based on the dominant period
 % and the epicentral distance (Calvet et al., 2006)
@@ -64,14 +61,14 @@ switch T
             width = 415;
         elseif epid>=160 && epid<170
             width = 510;
-        elseif epid>=170 && epid<180
+        elseif epid>=170 && epid<=180
             width = 540;
         end
  otherwise
   error('Need to specify an acceptable period')
 end
 
-% The radius of the inner core based on the choosen model...
+% The radius of the inner core based on the chosen model...
 a = eval(mod);
 R = max(a.depth);
 % The radius of the inner core will be R-(the first or last element of coredep array)
@@ -110,6 +107,7 @@ for ii = 1:length(corelat)-1
         case 0
             % 1. Define these points, then call LINE3SPHERE to find the other
             % intersection point with the sphere of interest.
+            % Be careful with the normalization process
             th = [corelon(ii), corelon(ii+1)] * pi/180;
             phi = [corelat(ii), corelat(ii+1)] * pi/180;
             r = (R-[coredep(ii), coredep(ii+1)])./rsphere;
@@ -117,10 +115,6 @@ for ii = 1:length(corelat)-1
             %
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
                 [0, 0, 0, (R-coredep(ii))/rsphere], 0);
-            
-%             if xver==1
-%                 % 2D plot using polcart 
-%             end
             
             % Should find the coordinates of the second point to use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
@@ -134,12 +128,12 @@ for ii = 1:length(corelat)-1
             [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
                 [outlon outlat], (R-coredep(ii))/rsphere , 0);
             % Will take the upper patch
-            pts{ii,1} = topS;
-            pts{ii,2} = coredep(ii);
+            prepts{ii,1} = topS;
+            prepts{ii,2} = coredep(ii);
             
         case 1
-            % Back tracing using the new arrays
-            % Same as described above, no need for detailed comments
+            % Back tracing using the new arrays, don't forget to replace
+            % them ALL!
             % Find the other point using LINE3SPHERE
             th  =  [newlon(jj) newlon(jj+1)] * pi/180;
             phi =  [newlat(jj) newlat(jj+1)] * pi/180;
@@ -154,16 +148,20 @@ for ii = 1:length(corelat)-1
             [xyzS, topS, botS] = cylindric((width/2)/rsphere, [newlon(jj) newlat(jj)], ...
                 [outlon outlat], (R-newdep(jj))/rsphere, 0);
             % Will take the upper patch
-            pts{ii,1} = topS;
-            pts{ii,2} = newdep(jj);
+            postpts{jj,1} = topS;
+            postpts{jj,2} = newdep(jj);
             
             % Update the counting variable jj
             jj = jj+1; 
     end
 end
 
-% Make sure to remove the zero values at turnning point from pts
-pts(index,:)=[];
+% Flip the points after turning point - just for better "animated" plotting
+postpts = flipud(postpts);
 
+% Now, combine prepts & postpts in one cell array
+pts = [prepts; postpts];
+
+end
 
 
