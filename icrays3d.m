@@ -127,9 +127,9 @@ for ii = 1:length(corelat)-1
             % Back tracing using the new arrays
             % Same as described above, no need for detailed comments
             % Find the other point using LINE3SPHERE
-            th = [newlon(jj), newlon(jj+1)] * pi/180;
-            phi = [newlat(jj), newlat(jj+1)] * pi/180;
-            r = (R-[newdep(jj), newdep(jj+1)])./rsphere;
+            th  =  [newlon(jj) newlon(jj+1)] * pi/180;
+            phi =  [newlat(jj) newlat(jj+1)] * pi/180;
+            r = (R-[newdep(jj) newdep(jj+1)])./rsphere;
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
                 [0, 0, 0, (R-newdep(jj))/rsphere], 0);
