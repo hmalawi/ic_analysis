@@ -26,11 +26,21 @@ function pts = ...
 %
 % EXAMPLE:
 %
-% for ind=1:size(pts,1)
-%   plot3(pts{ind,1}(1,:),pts{ind,1}(2,:),pts{ind,1}(3,:),'+'); 
-%   axis image; axis([-1 1 -1 1 -1 1]) ; grid on; view(60,26)
-%   title(sprintf('depth %i km',round(pts{ind,2})')) ;pause
+% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, ...
+% turnpt);
+% for ii = 1:length(pts)
+%     pp = pts{ii,1};
+%     plot3(pp(1,:),pp(2,:),pp(3,:),'.-')
+%     xlabel('x')
+%     ylabel('y')
+%     zlabel('z')
+%     axis equal
+%     axis([-1 1 -1 1 -1 1])
+%     title(sprintf('%i',ii))
+%     pause
+%     hold on
 % end
+% hold off
 %
 % SEE ALSO:
 %
