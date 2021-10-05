@@ -26,6 +26,12 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
 %
+%
+% EXAMPLE:
+%
+% [corelat, corelon, coredep, coredis, epid, p, turnpt]=icray;
+% % Makes a plot
+%
 % SEE ALSO:
 %
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
