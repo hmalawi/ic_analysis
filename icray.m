@@ -3,7 +3,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %                icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase);
 %
-% This function is mainly built to calculate the discretized path
+% This function is built to calculate the discretized path
 % of the inner core segment of a ray.
 %
 % INPUT:
@@ -26,13 +26,21 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
 %
+%
+% EXAMPLE:
+%
+% [corelat, corelon, coredep, coredis, epid, p, turnpt]=icray;
+% % Makes a plot
+% pts =  icrays3d(T, corelat, corelon, coredep, coredis, epid, [], p, turnpt);
+%
 % SEE ALSO:
 %
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi - May 16th, 2021
 % Last modified by Huda Al Alawi - September 29th, 2021
-%
+
+
 
 % Define default values
 defval('mod', 'ak135')
