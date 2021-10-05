@@ -3,7 +3,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %                icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase);
 %
-% This function is mainly built to calculate the discretized path
+% This function is built to calculate the discretized path
 % of the inner core segment of a ray.
 %
 % INPUT:
