@@ -21,18 +21,7 @@ function pts = ...
 %
 % OUTPUT:
 %
-% pts         Cell array with all x,y,z points defining the "ray cylinders" in the first
-%              column and the corresponding depth in the second column;
-%              these points are on a unit sphere of radius for the
-%              corresponding depth 
-%
-% EXAMPLE:
-%
-% for ind=1:size(pts,1)
-%   plot3(pts{ind,1}(1,:),pts{ind,1}(2,:),pts{ind,1}(3,:),'+'); 
-%   axis image; axis([-1 1 -1 1 -1 1]) ; grid on; view(60,26)
-%   title(sprintf('depth %i km',round(pts{ind,2})')) ;pause
-% end
+% pts          Cell array with all points defining the "ray cylinders" in the first column and the corresponding depth in the second column
 %
 % SEE ALSO:
 %
@@ -46,7 +35,6 @@ function pts = ...
 defval('T', 1)
 defval('mod', 'ak135')
 defval('xver', 1)
-defval('width', 333)
 
 % We need to define the width of the kernels based on the dominant period
 % and the epicentral distance (Calvet et al., 2006)
@@ -59,6 +47,7 @@ switch T
         elseif epid>=170 && epid<180
             width = 390;
         end
+        
     case 2
         if epid>=146 && epid<160
             width = 415;
@@ -166,4 +155,4 @@ end
 pts(index,:)=[];
 
 
-
+end
