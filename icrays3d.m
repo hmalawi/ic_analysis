@@ -30,7 +30,10 @@ function pts = ...
 % turnpt);
 % for ii = 1:length(pts)
 %     pp = pts{ii,1};
-%     plot3(pp(1,:),pp(2,:),pp(3,:),'.-')
+%     c = pts{ii,3};
+%     plot3(pp(1,:),pp(2,:),pp(3,:),'.-k')
+%     hold on
+%     plot3(c(1),c(2),c(3),'.-r', 'MarkerSize',10)
 %     xlabel('x')
 %     ylabel('y')
 %     zlabel('z')
