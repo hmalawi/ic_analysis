@@ -20,7 +20,8 @@ function pts = ...
 % OUTPUT:
 %
 % pts         Cell array with all x,y,z points defining the "ray cylinders" in the first
-%             column and the corresponding depth in the second column;
+%             column, the corresponding depth in the second column, and the
+%             x,y,z points along the ray in the third column
 %             these points are on a unit sphere of radius for the
 %             corresponding depth 
 %
