@@ -122,13 +122,18 @@ for ii = 1:length(corelat)-1
             phi = [corelat(ii), corelat(ii+1)] * pi/180;
             r = (R-[coredep(ii), coredep(ii+1)])./rsphere;
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
-            %
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
                 [0, 0, 0, (R-coredep(ii))/rsphere], 0);
             
             % Should find the coordinates of the second point to use CYLINDRIC
-            [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
-            outlon = th*180/pi; outlat = phi*180/pi;
+            % Make sure to select the right point
+            if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
+                [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
+                outlon = th*180/pi; outlat = phi*180/pi;
+            elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
+                [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
+                outlon = th*180/pi; outlat = phi*180/pi;
+            end
             
             % 2. Call CYLINDRIC to find the interection of a cylinder of radius r
             % (ray with kernel width) with a sphere. There will be top patch and bottom
@@ -140,6 +145,8 @@ for ii = 1:length(corelat)-1
             % Will take the upper patch
             prepts{ii,1} = topS;
             prepts{ii,2} = coredep(ii);
+            % Store the x,y,z of the original point
+            prepts{ii,3} = [x(1) y(1) z(1)];
             
         case 1
             % Back tracing using the new arrays, don't forget to replace
@@ -160,6 +167,8 @@ for ii = 1:length(corelat)-1
             % Will take the upper patch
             postpts{jj,1} = topS;
             postpts{jj,2} = newdep(jj);
+            % Store the x,y,z of the original point
+            postpts{jj,3} = [x(1) y(1) z(1)];
             
             % Update the counting variable jj
             jj = jj+1; 
