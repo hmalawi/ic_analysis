@@ -1,5 +1,5 @@
 function pts = ...
-         icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
+         icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, choice)
 % pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
 %
 % This function returns a structure that has the kernel-defining-points
@@ -16,6 +16,9 @@ function pts = ...
 % mod          The chosen velocity model [defaulted]
 % p            Ray parameter [s/deg]
 % turnpt       Latitude, longitude, and depth of the turning point
+% choice       0 gives points appropriate for heat maps
+%              1 gives points appropriate for visualizing/animating the ray
+%              [defaulted]
 %
 % OUTPUT:
 %
@@ -23,7 +26,8 @@ function pts = ...
 %             column, the corresponding depth in the second column, and the
 %             x,y,z points along the ray in the third column
 %             these points are on a unit sphere of radius for the
-%             corresponding depth 
+%             corresponding depth (if choice = 0) & on a unit sphere of the
+%             core's radius (if choice = 1)
 %
 % EXAMPLE:
 %
@@ -58,6 +62,7 @@ function pts = ...
 defval('T', 1)
 defval('mod', 'ak135')
 defval('width', 300)
+defval('choice', 0)
 
 % We need to define the width of the kernels based on the dominant period
 % and the epicentral distance (Calvet et al., 2006)
@@ -86,7 +91,13 @@ end
 a = eval(mod);
 R = max(a.depth);
 % The radius of the inner core will be R-(the first or last element of coredep array)
-rsphere = R-coredep(1);
+rcore = R-coredep(1);
+
+if choice==1
+    rsphere = ones(length(coredep),1) .* rcore;
+elseif choice==0
+    rsphere = R-coredep;
+end
 
 % A flag for the turning point
 turn = 0;
@@ -110,6 +121,7 @@ for ii = 1:length(corelat)-1
         newlat = flipud(corelat(index+1:end));
         newlon = flipud(corelon(index+1:end));
         newdep = flipud(coredep(index+1:end));
+        newsph = flipud(rsphere(index+1:end));
         % New counting variable
         jj = 1;
         continue
@@ -124,10 +136,10 @@ for ii = 1:length(corelat)-1
             % Be careful with the normalization process
             th = [corelon(ii), corelon(ii+1)] * pi/180;
             phi = [corelat(ii), corelat(ii+1)] * pi/180;
-            r = (R-[coredep(ii), coredep(ii+1)])./rsphere;
+            r = (R-[coredep(ii), coredep(ii+1)])./rsphere(ii);
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-                [0, 0, 0, (R-coredep(ii))/rsphere], 0);
+                [0, 0, 0, (R-coredep(ii))/rsphere(ii)], 0);
             
             % Should find the coordinates of the second point to use CYLINDRIC
             % Make sure to select the right point
@@ -144,8 +156,8 @@ for ii = 1:length(corelat)-1
             % patch. Take the top until the turning point, then will have to trace
             % it backwards
             % Radius of sphere and cylinder are normalized (using core's radius)
-            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [corelon(ii) corelat(ii)], ...
-                [outlon outlat], (R-coredep(ii))/rsphere , 0);
+            [xyzS, topS, botS] = cylindric((width/2)/rsphere(ii), [corelon(ii) corelat(ii)], ...
+                [outlon outlat], (R-coredep(ii))/rsphere(ii) , 0);
             % Will take the upper patch
             prepts{ii,1} = topS;
             prepts{ii,2} = coredep(ii);
@@ -158,16 +170,16 @@ for ii = 1:length(corelat)-1
             % Find the other point using LINE3SPHERE
             th  =  [newlon(jj) newlon(jj+1)] * pi/180;
             phi =  [newlat(jj) newlat(jj+1)] * pi/180;
-            r = (R-[newdep(jj) newdep(jj+1)])./rsphere;
+            r = (R-[newdep(jj) newdep(jj+1)])./newsph(jj);
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
-                [0, 0, 0, (R-newdep(jj))/rsphere], 0);
+                [0, 0, 0, (R-newdep(jj))/newsph(jj)], 0);
             % Change coordinated and then use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
             outlon = th*180/pi; outlat = phi*180/pi;
             
-            [xyzS, topS, botS] = cylindric((width/2)/rsphere, [newlon(jj) newlat(jj)], ...
-                [outlon outlat], (R-newdep(jj))/rsphere, 0);
+            [xyzS, topS, botS] = cylindric((width/2)/newsph(jj), [newlon(jj) newlat(jj)], ...
+                [outlon outlat], (R-newdep(jj))/newsph(jj), 0);
             % Will take the upper patch
             postpts{jj,1} = topS;
             postpts{jj,2} = newdep(jj);
