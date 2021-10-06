@@ -174,9 +174,20 @@ for ii = 1:length(corelat)-1
             [x, y, z] = sph2cart(th(:), phi(:), r(:));
             xyz = line3sphere([x(1), y(1), z(1)], [x(2), y(2), z(2)], ...
                 [0, 0, 0, (R-newdep(jj))/newsph(jj)], 0);
+            
             % Change coordinated and then use CYLINDRIC
             [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
             outlon = th*180/pi; outlat = phi*180/pi;
+            
+            % Should find the coordinates of the second point to use CYLINDRIC
+            % Make sure to select the right point
+            if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
+                [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
+                outlon = th*180/pi; outlat = phi*180/pi;
+            elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
+                [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
+                outlon = th*180/pi; outlat = phi*180/pi;
+            end
             
             [xyzS, topS, botS] = cylindric((width/2)/newsph(jj), [newlon(jj) newlat(jj)], ...
                 [outlon outlat], (R-newdep(jj))/newsph(jj), 0);
