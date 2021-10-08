@@ -37,8 +37,8 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 %
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
-% Written by Huda Al Alawi - May 16th, 2021
-% Last modified by Huda Al Alawi - October 5th, 2021
+% Written by Huda Al Alawi (halawi@princeton.edu) - May 16th, 2021
+% Last modified by Huda Al Alawi - October 8th, 2021
 %
 
 % Define default values
