@@ -55,7 +55,7 @@ function pts = ...
 % ICRAY
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - May 20th, 2021.
-% Last modified by Huda Al Alawi - October 5th, 2021
+% Last modified by Huda Al Alawi - October 8th, 2021
 %
 
 % Define default values
