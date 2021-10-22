@@ -3,7 +3,7 @@ function pts = ...
 % pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
 %
 % This function returns a structure that has the kernel-defining-points
-% of an inner core segment of a ray at different shells (depths).
+% of an inner core segment of a ray at different shells (depths). 
 %
 % INPUT:
 %
@@ -31,6 +31,8 @@ function pts = ...
 %
 % EXAMPLE:
 %
+% [corelat, corelon, coredep, coredis, epid, p, turnpt,mod]=icray;
+% T=2;
 % pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, ...
 % turnpt);
 % for ii = 1:length(pts)
