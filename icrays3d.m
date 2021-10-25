@@ -1,6 +1,6 @@
 function pts = ...
          icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, choice)
-% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt)
+% pts = icrays3d(T, corelat, corelon, coredep, coredis, epid, mod, p, turnpt, choice)
 %
 % This function returns a structure that has the kernel-defining-points
 % of an inner core segment of a ray at different shells (depths). 
@@ -57,7 +57,7 @@ function pts = ...
 % ICRAY
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - May 20th, 2021.
-% Last modified by Huda Al Alawi - October 22, 2021
+% Last modified by Huda Al Alawi - October 25, 2021
 %
 
 % Define default values
