@@ -1,4 +1,4 @@
-function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
+function [corelat, corelon, coredep, coredis, epid, p, turnpt, mod] = ...
     icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase)
 % [corelat, corelon, coredep, coredis, epid, p, turnpt, mod] = ...
 %                icray(eqlat, eqlon, eqdepth, stalat, stalon, mod, vphase);
@@ -22,9 +22,10 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % corelon         The longitude of the discretized path of the innercore ray segment
 % coredep         The depth of the discretized path of the innercore ray segment [km] 
 % coredis         The epicentral distance of the discretized path of the innercore ray segment [deg]
-% turnpt          The turning point (coordinates, and depth)
 % epid            Epicentral distance
 % p               Ray parameter [s/deg]
+% turnpt          The turning point (coordinates, and depth)
+% mod             The chosen velocity model
 %
 %
 % EXAMPLE:
@@ -38,7 +39,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt] = ...
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - May 16th, 2021
-% Last modified by Huda Al Alawi - October 22, 2021
+% Last modified by Huda Al Alawi - October 25, 2021
 %
 
 % Define default values
