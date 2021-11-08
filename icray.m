@@ -39,7 +39,7 @@ function [corelat, corelon, coredep, coredis, epid, p, turnpt, mod] = ...
 % Requires TAUPPATH from https://github.com/g2e/seizmo/tree/master/mattaup
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - May 16th, 2021
-% Last modified by Huda Al Alawi - October 25, 2021
+% Last modified by Huda Al Alawi - November 8, 2021
 %
 
 % Define default values
@@ -57,6 +57,14 @@ defval('stalon', -74.65475)
 % Now let's use taup to discretize some parameters
 data = tauppath('mod', mod, 'dep', eqdepth, 'ph', vphase, 'sta', ...
     [stalat stalon], 'evt', [eqlat eqlon]);
+
+% If the structure is empty (the chosen ray do not have the specified
+% phase), return nothing
+if isempty(data)
+    corelat = NaN; corelon = NaN; coredep = NaN; turnpt = NaN;
+    epid = NaN; p = NaN; coredis = NaN;
+    return
+end
  
 % Epicentral distance
 epid = data.distance;
@@ -101,7 +109,7 @@ inout = find(raydep == icdep);
 % points at the depth of the inner core, return nothing
 if length(inout) ~= 2
     corelat = NaN; corelon = NaN; coredep = NaN; turnpt = NaN;
-    epid = NaN; p = NaN;
+    epid = NaN; p = NaN; coredis = NaN;
     return
 % If everything went well, return innercore data
 else
