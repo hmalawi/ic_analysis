@@ -68,13 +68,16 @@ for ii = 1:length(ref)
             end
             % Assign the corresponding area points to an array
             pp = cell2mat(pts{jj}(pos(kk),1));
+            % Need better arrangement to make things work
+            pp = pp';
+            pp = sortrows(pp);
             % First to spherical coordinates
-            [azi, ele, radi] = cart2sph(pp(1,:), pp(2,:), pp(3,:));
+            [azi, ele, radi] = cart2sph(pp(:,1), pp(:,2), pp(:,3));
             % Then lat-lon
             lon = azi*180/pi;
             lat = ele*180/pi;
             % Now call inpolymoll to get proper matrices to plot
-            [v{jj,kk}, xp, yp, xgr, ygr] = inpolymoll(lon', lat');
+            [v{jj,kk}, xp, yp, xgr, ygr] = inpolymoll(lon, lat);
         end  
     end
     
