@@ -145,13 +145,13 @@ for ii = 1:length(corelat)-1
             
             % Should find the coordinates of the second point to use CYLINDRIC
             % Make sure to select the right point
-            if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
+%             if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
                 [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
                 outlon = th*180/pi; outlat = phi*180/pi;
-            elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
-                [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
-                outlon = th*180/pi; outlat = phi*180/pi;
-            end
+%             elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
+%                 [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
+%                 outlon = th*180/pi; outlat = phi*180/pi;
+%             end
             
             % 2. Call CYLINDRIC to find the interection of a cylinder of radius r
             % (ray with kernel width) with a sphere. There will be top patch and bottom
@@ -179,13 +179,13 @@ for ii = 1:length(corelat)-1
             
             % Should find the coordinates of the second point to use CYLINDRIC
             % Make sure to select the right point
-            if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
+%             if (x(1)==xyz(1,1)) && (y(1)==xyz(2,1)) && (z(1)==xyz(3,1))
                 [th, phi, r] = cart2sph(xyz(1,2), xyz(2,2), xyz(3,2));
                 outlon = th*180/pi; outlat = phi*180/pi;
-            elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
-                [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
-                outlon = th*180/pi; outlat = phi*180/pi;
-            end
+%             elseif x(1)==xyz(1,2) && y(1)==xyz(2,2) && z(1)==xyz(3,2)
+%                 [th, phi, r] = cart2sph(xyz(1,1), xyz(2,1), xyz(3,1));
+%                 outlon = th*180/pi; outlat = phi*180/pi;
+%             end
             
             [xyzS, topS, botS] = cylindric((width/2)/newsph(jj), [newlon(jj) newlat(jj)], ...
                 [outlon outlat], (R-newdep(jj))/newsph(jj), 0);
