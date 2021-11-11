@@ -70,7 +70,9 @@ for ii = 1:length(ref)
             pp = cell2mat(pts{jj}(pos(kk),1));
             % Need better arrangement to make things work
             pp = pp';
-            pp = sortrows(pp);
+            
+            % Call arrangepts.m to check teh points of the current polygon
+            % (to avoid di
             % First to spherical coordinates
             [azi, ele, radi] = cart2sph(pp(:,1), pp(:,2), pp(:,3));
             % Then lat-lon
