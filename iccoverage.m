@@ -71,10 +71,12 @@ for ii = 1:length(ref)
             % Need better arrangement to make things work
             pp = pp';
             
-            % Call arrangepts.m to check teh points of the current polygon
-            % (to avoid di
+            % Call arrangepts.m to check the points of the current polygon
+            % (to avoid distortions when plotting)
+            [x, y, z] = arrangepts(pp(:,1), pp(:,2), pp(:,3));
+            
             % First to spherical coordinates
-            [azi, ele, radi] = cart2sph(pp(:,1), pp(:,2), pp(:,3));
+            [azi, ele, radi] = cart2sph(x, y, z);
             % Then lat-lon
             lon = azi*180/pi;
             lat = ele*180/pi;
