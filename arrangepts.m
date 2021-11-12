@@ -21,8 +21,8 @@ if maxi-avg < 0.1
         % Define the points
         p1 = [x(end) y(end) z(end)];
         p2 = [x(1) y(1) z(1)];
-        % Create, how about 100 points, between them? That should be enough
-        n = 100;
+        % Create, how about 50 points, between them? That should be enough
+        n = 50;
         pset = linspace(0, 1, n)';
         pinterp = (1-pset)*p1 + pset*p2;
         % Exclude the first and last points 'cause they already exist in 
@@ -46,9 +46,12 @@ elseif maxi-avg >= 0.1
     p1 = [x(ind) y(ind) z(ind)];
     p2 = [x(ind+1) y(ind+1) z(ind+1)];
     % Connect them
-    n = 100;
+    n = 50;
     pset = linspace(0, 1, n)';
     pinterp = (1-pset)*p1 + pset*p2;
+    % Exclude the first and last points 'cause they already exist in 
+    % the original set of points
+    pinterp = pinterp(2:end-1 , :);
     % Return the new set of points
     xnew = [x(1:ind) ; pinterp(:,1) ; x(ind+1:end)];
     ynew = [y(1:ind) ; pinterp(:,2) ; y(ind+1:end)];
