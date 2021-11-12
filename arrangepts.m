@@ -1,4 +1,25 @@
 function [xnew, ynew, znew] = arrangepts(x, y, z)
+% [xnew, ynew, znew] = arrangepts(x, y, z)
+%
+% Checks for the unclosed areas in the kernel's defining polygons and
+% fix it.
+%
+% INPUT:
+%
+% x, y, z       Cartesian coordinate of the polygons
+%
+% OUTPUT:
+%
+% x, y, z       The new set of points after the gap is filled
+%
+%
+% SEE ALSO:
+%
+% ICCOVERAGE
+%
+% Written by Huda Al Alawi (halawi@princeton.edu) - November 10, 2021
+% Last modified by Huda Al Alawi - November 11, 2021
+%
 
 % Find the distances
 dist = sqrt([diff(x)].^2 + [diff(y)].^2 + [diff(z)].^2);
