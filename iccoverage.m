@@ -1,4 +1,4 @@
-function iccoverage(fdir, fname, mod, vphase, T)
+function iccoverage(fdir, fname, mod, vphase, T, outdir)
 
 % Open the file and read the data, skip the headerlines
 % #Network, Station, sLatitude, sLongitude, EventID, tOrigin, eLatitude, eLongitude, Depth(km)
@@ -34,13 +34,12 @@ dd = cell2mat(pts{index}(:,2));
 % Maybe also store the maximum reached depth
 [maxdep, maxpos] = max(dd);
 
+% Choose some depths, you can do it all though
 ref = [dd(1), dd(21), dd(33), dd(46), dd(55), dd(71), dd(100), dd(122)];
 
-% To store depths that already done
+% To store depths that are already done
 thisdone = zeros(length(ref),1);
 
-% Choose some depths, or maybe do it for all? isn't that too much? maybe
-% not! 'cause if didn't do it for all, how are you gonna choose?
 for ii = 1:length(ref)
     % Check if this depth was already done
     findit = find(thisdone == ref(ii));
@@ -80,32 +79,49 @@ for ii = 1:length(ref)
             % Then lat-lon
             lon = azi*180/pi;
             lat = ele*180/pi;
-            % Now call inpolymoll to get proper matrices to plot
+            % Now call inpolymoll to get proper matrices to plot. Store
+            % them all into a structure
             [v{jj,kk}, xp, yp, xgr, ygr] = inpolymoll(lon, lat);
         end  
     end
     
-    % Now need to add all the v we got
-    S = sum(cat(3, v{:}), 3);
-    % Plot them
-    figure(1)
-    clf
-    pcolor(xgr, ygr, S); shading flat
+    % Now need to add all the v(s) we got for this depth and store it 
+    % in another cell array (I could have generated the maps here.
+    % However, since the colorbar range should be uniform for all depths,
+    % I need to know the maximum overlap at all depths before deciding.)
+    S{ii,1} = sum(cat(3, v{:}), 3);
+    S{ii,2} = ref(ii);
+    S{ii,3} = max(max(S{ii,1}));
+    
+    % Mark this depth as "done" to avoid repetition
+    thisdone(ii) = ref(ii);
+    % Clear the variable S v to make sure it won't contribute to the
+    % other depths
+    clear v
+
+end
+
+% Find the maximum and minimum overlap for uniform colorbar range
+maxx = max([S{:,3}]);
+minn = min([S{:,3}]);
+
+% Save the heat maps without displaying
+for h = 1:length(ref)
+    outname = sprintf('%sdepth%d.png', outdir, ref(h));
+    f = figure('visible', 'off');
+    pcolor(xgr, ygr, S{h,1}); shading flat
     hold on
     plotcont([],[],2)
     plotplates([],[],2)
+    colorbar
+    caxis([minn maxx])
     hold off
     axis off image
-    pstuff = sprintf('Maximum overlap %d', max(max(S)));
-    text(1.65,-1.4,pstuff,'FontSize',6);
-    % Save the figure maybe
-    print(sprintf('/Users/hma/Desktop/maps/depth%d.png', ref(ii)),'-dpng','-r300')
+    pstuff = sprintf('The maximum overlap %d', S{h,3});
+    text(1.65, -1.4, pstuff, 'FontSize', 6);
+    print(outname, '-dpng', '-r300')
+    close(f)
     
-    % Clear the variables S and v
-    clear S
-    clear v
-    % Mark this depth as "done" to avoid repetition
-    thisdone(ii) = ref(ii);
 end
 
 end
