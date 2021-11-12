@@ -1,4 +1,35 @@
-function iccoverage(fdir, fname, mod, vphase, T, outdir)
+function S = iccoverage(fdir, fname, mod, vphase, T, outdir)
+% S = iccoverage(fdir, fname, mod, vphase, T, outdir)
+%
+% This function is built to plot inner-core spatial coverage maps.
+%
+% INPUT:
+%
+% fdir           The directory at which the input file is located (this
+%                should be in the same format of EQDATA output file)
+% fname          Name of the data file
+% mod            The chosen velocity model [defaulted]
+% vphase         Seismic velocity phase (i.e., PKIKP for the innercore) [defaulted]
+% T              The dominant period [defaulted]	
+% outdir         The directory at which the maps will be saved
+%
+% OUTPUT:
+%
+% S              A cell array that has plottable Mollweide heat maps at
+%                different depths of the inner-core in the first column,
+%                the corresponding depth in the secon column, and the
+%                maximum overlap in the third column
+%
+% In addition to a set of maps will be generated and saved into "outdir"
+%
+%
+% SEE ALSO:
+%
+% ICRAY, ICRAYS3D
+%
+% Written by Huda Al Alawi (halawi@princeton.edu) - November 6, 2021
+% Last modified by Huda Al Alawi - November 11, 2021
+%
 
 % Open the file and read the data, skip the headerlines
 % #Network, Station, sLatitude, sLongitude, EventID, tOrigin, eLatitude, eLongitude, Depth(km)
