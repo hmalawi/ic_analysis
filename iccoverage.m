@@ -1,5 +1,5 @@
-function S = iccoverage(fdir, fname, mod, vphase, T, outdir)
-% S = iccoverage(fdir, fname, mod, vphase, T, outdir)
+function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
+% S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
 %
 % This function is built to plot inner-core spatial coverage maps.
 %
@@ -12,6 +12,7 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir)
 % vphase         Seismic velocity phase (i.e., PKIKP for the innercore) [defaulted]
 % T              The dominant period [defaulted]	
 % outdir         The directory at which the maps will be saved
+% dmax           How far in the data file to progress [default: all]
 %
 % OUTPUT:
 %
@@ -28,7 +29,7 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir)
 % ICRAY, ICRAYS3D
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - November 6, 2021
-% Last modified by Huda Al Alawi - November 11, 2021
+% Last modified by Huda Al Alawi - November 24, 2021
 %
 
 % Open the file and read the data, skip the headerlines
@@ -36,8 +37,12 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir)
 fid = fopen(strcat(fdir, fname), 'r');
 data = textscan(fid, '%s%s%f%f%d%s%f%f%f', 'HeaderLine', 10);
 
+% Initialize PTS with thw max possible numbet of points
+
+defval('dmax',length(data{1}))
+
 % Now get the discretized ray (with the kernels considered) for all of them
-for ii = 1:length(data{1})
+for ii = 1:dmax
     % Call icray.m to get the descritized ray path
     [corelat, corelon, coredep, coredis, epid, p, turnpt, mod] = ... 
     icray(data{7}(ii), data{8}(ii), data{9}(ii), data{3}(ii), data{4}(ii),...
@@ -47,9 +52,11 @@ for ii = 1:length(data{1})
     if isnan(corelat)
         continue
     else
+        
         pts{ii} = icrays3d(T, corelat, corelon, coredep, coredis, epid, ...
             mod, p, turnpt, 0);
     end
+    % Percentage update
 end
 
 % Remove empty cells from pts
@@ -66,7 +73,8 @@ dd = cell2mat(pts{index}(:,2));
 [maxdep, maxpos] = max(dd);
 
 % Choose some depths, you can do it all though
-ref = [dd(1), dd(21), dd(33), dd(46), dd(55), dd(71), dd(100), dd(122)];
+refs=[1 21 33 46 55 71 100 122];
+ref =dd(refs(refs<=length(dd)));
 
 % To store depths that are already done
 thisdone = zeros(length(ref),1);
@@ -139,20 +147,21 @@ minn = min([S{:,3}]);
 % Save the heat maps without displaying
 for h = 1:length(ref)
     outname = sprintf('%sdepth%d.png', outdir, ref(h));
-    f = figure('visible', 'off');
+  %  f = figure('visible', 'off');
+  figure(h)
+  clf
     pcolor(xgr, ygr, S{h,1}); shading flat
     hold on
     plotcont([],[],2)
     plotplates([],[],2)
     colorbar
-    caxis([minn maxx])
+    caxis([min(0,minn) maxx])
     hold off
     axis off image
     pstuff = sprintf('The maximum overlap %d', S{h,3});
     text(1.65, -1.4, pstuff, 'FontSize', 6);
-    print(outname, '-dpng', '-r300')
-    close(f)
-    
+%    print(outname, '-dpng', '-r300')
+ %   close(f)  
 end
 
 end
