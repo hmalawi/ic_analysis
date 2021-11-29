@@ -119,7 +119,7 @@ for ii = 1:length(ref)
             lon = azi*180/pi;
             lat = ele*180/pi;
             % Now call inpolymoll to get proper matrices to plot. Store
-            % them all into a structure
+            % them all into a cell array
             [v{jj,kk}, xp, yp, xgr, ygr] = inpolymoll(lon, lat);
         end  
     end
@@ -155,12 +155,13 @@ for h = 1:length(ref)
     plotcont([],[],2)
     plotplates([],[],2)
     colorbar
-    caxis([min(0,minn) maxx])
+    %caxis([min(0,minn) maxx])
+    %caxis([minn maxx])
     hold off
     axis off image
     pstuff = sprintf('The maximum overlap %d', S{h,3});
     text(1.65, -1.4, pstuff, 'FontSize', 6);
-%    print(outname, '-dpng', '-r300')
+    print(outname, '-dpng', '-r300')
  %   close(f)  
 end
 
