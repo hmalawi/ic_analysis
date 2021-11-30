@@ -1,5 +1,5 @@
-function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
-% S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
+function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmin, dmax, pflag)
+% S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax, pflag)
 %
 % This function is built to plot inner-core spatial coverage maps.
 %
@@ -12,7 +12,9 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
 % vphase         Seismic velocity phase (i.e., PKIKP for the innercore) [defaulted]
 % T              The dominant period [defaulted]	
 % outdir         The directory at which the maps will be saved
+% dmin           The index of starting data point [defaulted: 1]
 % dmax           How far in the data file to progress [default: all]
+% pflag          1 to save plots
 %
 % OUTPUT:
 %
@@ -29,7 +31,7 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
 % ICRAY, ICRAYS3D
 %
 % Written by Huda Al Alawi (halawi@princeton.edu) - November 6, 2021
-% Last modified by Huda Al Alawi - November 24, 2021
+% Last modified by Huda Al Alawi - November 30, 2021
 %
 
 % Open the file and read the data, skip the headerlines
@@ -37,12 +39,17 @@ function S = iccoverage(fdir, fname, mod, vphase, T, outdir, dmax)
 fid = fopen(strcat(fdir, fname), 'r');
 data = textscan(fid, '%s%s%f%f%d%s%f%f%f', 'HeaderLine', 10);
 
-% Initialize PTS with thw max possible numbet of points
+defval('dmax', length(data{1}))
+defval('dmin', 1)
+defval('pflag', 0)
 
-defval('dmax',length(data{1}))
+% Initialize PTS with the max possible number of points later
+
+% Independent counting index for the 
+jj = 1;
 
 % Now get the discretized ray (with the kernels considered) for all of them
-for ii = 1:dmax
+for ii = dmin:dmax
     % Call icray.m to get the descritized ray path
     [corelat, corelon, coredep, coredis, epid, p, turnpt, mod] = ... 
     icray(data{7}(ii), data{8}(ii), data{9}(ii), data{3}(ii), data{4}(ii),...
@@ -50,11 +57,14 @@ for ii = 1:dmax
    
     % Check whether the returned values are valid or not
     if isnan(corelat)
+        % Update the index and continue
+        jj = jj + 1;
         continue
     else
-        
-        pts{ii} = icrays3d(T, corelat, corelon, coredep, coredis, epid, ...
+        % Save and update the index
+        pts{jj} = icrays3d(T, corelat, corelon, coredep, coredis, epid, ...
             mod, p, turnpt, 0);
+        jj = jj + 1;
     end
     % Percentage update
 end
@@ -73,7 +83,7 @@ dd = cell2mat(pts{index}(:,2));
 [maxdep, maxpos] = max(dd);
 
 % Choose some depths, you can do it all though
-refs=[1 21 33 46 55 71 100 122];
+refs=[1 21 33 46 55 71 100 maxpos];
 ref =dd(refs(refs<=length(dd)));
 
 % To store depths that are already done
@@ -140,29 +150,34 @@ for ii = 1:length(ref)
 
 end
 
-% Find the maximum and minimum overlap for uniform colorbar range
-maxx = max([S{:,3}]);
-minn = min([S{:,3}]);
+% When done with summing the points, save "S" in outdir. Remember to
+% indicate the chosen indices in the name
+save(sprintf('sum%d-%d', dmin, dmax), 'S');
 
-% Save the heat maps without displaying
-for h = 1:length(ref)
-    outname = sprintf('%sdepth%d.png', outdir, ref(h));
-  %  f = figure('visible', 'off');
-  figure(h)
-  clf
-    pcolor(xgr, ygr, S{h,1}); shading flat
-    hold on
-    plotcont([],[],2)
-    plotplates([],[],2)
-    colorbar
-    %caxis([min(0,minn) maxx])
-    %caxis([minn maxx])
-    hold off
-    axis off image
-    pstuff = sprintf('The maximum overlap %d', S{h,3});
-    text(1.65, -1.4, pstuff, 'FontSize', 6);
-    print(outname, '-dpng', '-r300')
- %   close(f)  
+
+if pflag == 1
+    % Find the maximum and minimum overlap for uniform colorbar range
+    maxx = max([S{:,3}]);
+    minn = min([S{:,3}]);
+    
+    % Save the heat maps without displaying
+    for h = 1:length(ref)
+        outname = sprintf('%sdepth%d.png', outdir, ref(h));
+        f = figure('visible', 'off');
+        clf
+        pcolor(xgr, ygr, S{h,1}); shading flat
+        hold on
+        plotcont([], [], 2)
+        plotplates([], [], 2)
+        colorbar
+        %caxis([min(0,minn) maxx])
+        caxis([minn maxx])
+        hold off
+        axis off image
+        pstuff = sprintf('The maximum overlap %d', S{h,3});
+        text(1.65, -1.4, pstuff, 'FontSize', 6);
+        print(outname, '-dpng', '-r300')
+    end
 end
 
 end
