@@ -83,7 +83,7 @@ dd = cell2mat(pts{index}(:,2));
 [maxdep, maxpos] = max(dd);
 
 % Choose some depths, you can do it all though
-refs=[1 21 33 46 55 71 100 maxpos];
+refs=[1 11 18 23 28 32 35 38 43 50 62 89 110 maxpos];
 ref =dd(refs(refs<=length(dd)));
 
 % To store depths that are already done
@@ -134,6 +134,11 @@ for ii = 1:length(ref)
         end  
     end
     
+    % If the loop ends and not a single ray was found at this depth, then
+    % skip the rest of the loop to avoid errors
+    if ~exist('v')
+        continue
+    end
     % Now need to add all the v(s) we got for this depth and store it 
     % in another cell array (I could have generated the maps here.
     % However, since the colorbar range should be uniform for all depths,
